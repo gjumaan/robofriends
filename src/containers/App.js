@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import Header from '../components/Header';
 import CardList from '../components/CardList';
 import SearchBox from '../components/SearchBox';
 import Scroll from '../components/Scroll';
@@ -19,7 +20,7 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => {
 	return {
 		onSearchChange: (event) => dispatch(setSearchField(event.target.value)),
-		onRequestRobots: () => dispatch(requestRobots())
+		onRequestRobots: () => requestRobots(dispatch)
 	}
 }
 
@@ -29,25 +30,23 @@ class App extends Component {
 	}
 
 	render() {
-		const { searchField, onSearchChange, robots, isPending } = this.props;
+		const { robots, searchField, onSearchChange, isPending } = this.props;
 		const filteredRobots = robots.filter(robot => {
 			return robot.name.toLowerCase().includes(searchField.toLowerCase());
 		})
-		if (isPending) {
-			return <h1>Loading</h1>
-		} else {
-			return (
-				<div className='tc'>
-					<h1 className='f1 sticky'>RoboFriends</h1>
-					<SearchBox className='sticky' searchChange={onSearchChange}/>
+		return (
+			<div className='tc'>
+					<Header />
+					<SearchBox searchChange={onSearchChange}/>
 					<Scroll>
+					{ isPending ? <h1>Loading</h1> :
 						<ErrorBoundary>
 							<CardList robots={filteredRobots} />
 						</ErrorBoundary>
+					}
 					</Scroll>
-				</div>
-			)
-		}
+			</div>
+		);
 	}
 }
 
